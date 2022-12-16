@@ -1,31 +1,33 @@
-import { resolve as _resolve } from 'path';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-export const entry = {
-  app: './src/index.tsx',
-};
-export const module = {
-  rules: [
-    {
-      test: /\.(js|ts)x?$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
+module.exports = {
+  entry: {
+    app: './src/index.tsx',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|ts)x?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
       },
-    },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      filename: 'index.html',
+    }),
   ],
-};
-export const resolve = {
-  extensions: ['.tsx', '.ts', '.jsx', '.js'],
-};
-export const plugins = [
-  new HtmlWebpackPlugin({
-    template: './src/index.html',
-    filename: 'index.html',
-  }),
-];
-export const output = {
-  filename: '[name].bundle.js',
-  path: _resolve(__dirname, 'dist'),
-  clean: true,
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+  },
 };
