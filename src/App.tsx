@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <ComponentWithCreateElement />
-      <Counter />
-      <PureComponentExample />
-      <SearchForm />        
-    </div>
-  );
-}
+const App = () => (
+  <div className='App'>
+    <ComponentWithCreateElement />
+    <Counter />
+    <PureComponentExample />
+    <SearchForm />
+  </div>
+);
 
 // a component using React.createElement
-function ComponentWithCreateElement() {
-  return React.createElement('h2', { className: 'App' }, 'This is a component using React.createElement');
-}
+const ComponentWithCreateElement = () =>
+  React.createElement(
+    'h2',
+    { className: 'App' },
+    'This is a component using React.createElement'
+  );
 
 // a counter component using React.Component
 type CounterProps = Record<string, unknown>;
 
 type CounterState = {
   count: number;
-}
+};
 
 class Counter extends React.Component<CounterProps, CounterState> {
   constructor(props: any) {
@@ -32,15 +34,15 @@ class Counter extends React.Component<CounterProps, CounterState> {
 
   increment = () => {
     this.setState({ count: this.state.count + 1 });
-  }
+  };
 
   decrement = () => {
     this.setState({ count: this.state.count - 1 });
-  }
+  };
 
   reset = () => {
     this.setState({ count: 0 });
-  }
+  };
 
   render() {
     return (
@@ -58,55 +60,64 @@ class Counter extends React.Component<CounterProps, CounterState> {
 // a component using React.PureComponent
 type PureComponentExampleProps = Record<string, unknown>;
 
-type PureComponentEcxampleState = {
-  name: string
-}
+type PureComponentExampleState = {
+  name: string;
+};
 
-class PureComponentExample extends React.PureComponent<PureComponentExampleProps, PureComponentEcxampleState> {
-  constructor(props: PureComponentExampleProps | Readonly<PureComponentExampleProps>) {
-    super(props)
-  
+class PureComponentExample extends React.PureComponent<
+  PureComponentExampleProps,
+  PureComponentExampleState
+> {
+  constructor(
+    props: PureComponentExampleProps | Readonly<PureComponentExampleProps>
+  ) {
+    super(props);
+
     this.state = {
-       name: "John Doe"
-    }
+      name: 'John Doe',
+    };
   }
 
-/* changing state every second with the same value
+  /* changing state every second with the same value
 in this case the component will not re-render as it is a PureComponent
 and the name is a primitive value */
-componentDidMount(): void {
+  componentDidMount(): void {
     setInterval(() => {
-      this.setState({name: "John Doe"})
+      this.setState({ name: 'John Doe' });
     }, 1000);
   }
 
   render(): React.ReactNode {
-      return (
-        <div>
-          <h2>Pure Component Example</h2>
-          <p>His name is {this.state.name}</p>
-        </div>
-      )
+    return (
+      <div>
+        <h2>Pure Component Example</h2>
+        <p>His name is {this.state.name}</p>
+      </div>
+    );
   }
 }
 
 // A search form with a functional component
-function SearchForm() {
-  const [searchValue, setSearchValue] = useState('');
-  const [searchText, setSearchText] = useState('')
+const SearchForm = () => {
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
 
   const handleSearch = () => {
     setSearchText(searchValue);
-  }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
 
   return (
     <div>
       <h2>Search Form</h2>
-      <input type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+      <input type='text' value={searchValue} onChange={handleChange} />
       <button onClick={handleSearch}>Search</button>
       <p>You searched for: {searchText}</p>
     </div>
   );
-}
+};
 
 export default App;
