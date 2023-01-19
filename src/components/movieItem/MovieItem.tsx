@@ -17,6 +17,9 @@ const MovieItem: React.FC<MovieItemProps> = ({ img, title, genre, year }) => {
         <span>{year}</span>
       </div>
       <p className="genre">{genre}</p>
+      <div className="context">
+        <span className="context__icon"></span>
+      </div>
     </div>
   );
 };
