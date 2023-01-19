@@ -1,0 +1,37 @@
+@use '../../utils/variables' as *;
+
+.movie__item {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  height: 34rem;
+  color: $color-white;
+
+  img {
+    height: 28rem;
+  }
+
+  .title__date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.2rem;
+    span:first-child {
+      font-size: 1.2rem;
+      opacity: 0.7;
+    }
+    span:last-child {
+      font-size: 1rem;
+      opacity: 0.7;
+      display: inline-block;
+      border: 2px solid $color-dark-grey;
+      padding: 6px 14px;
+    }
+  }
+
+  .genre {
+    font-size: 1rem;
+    opacity: 0.5;
+    margin-top: 0;
+  }
+}

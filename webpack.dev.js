@@ -1,10 +1,11 @@
-const { merge } = require('webpack-merge');
-const common = require('./webpack.common.js');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-module.exports = merge(common, {
+module.exports = {
   mode: 'development',
-  devtool: 'inline-source-map',
   devServer: {
-    static: './dist',
+    hot: true,
+    open: true,
   },
-});
+  devtool: 'cheap-module-source-map',
+  plugins: [new ReactRefreshWebpackPlugin()],
+};
