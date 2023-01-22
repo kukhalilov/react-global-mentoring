@@ -1,15 +1,13 @@
 import './Navbar.scss';
 import Search from '../search/Search';
+import Logo from '../logo/Logo';
 
 const Navbar = () => {
   return (
     <section className="navbar">
       <div className="navbar__overlay">
         <div className="navbar__top">
-          <div className="navbar__logo">
-            <span>netflix</span>
-            <span>roulette</span>
-          </div>
+          <Logo />
         </div>
         <div className="navbar__bottom">
           <h1>Find your movie</h1>

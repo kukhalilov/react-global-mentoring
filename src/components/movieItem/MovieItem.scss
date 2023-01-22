@@ -30,7 +30,7 @@
     }
   }
 
-  .genre {
+  label.genre {
     font-size: 1rem;
     opacity: 0.5;
     margin-top: 0;
@@ -57,6 +57,38 @@
   &:hover {
     .context {
       display: flex;
+    }
+  }
+  .context__menu {
+    width: 12rem;
+    height: 6rem;
+    background-color: $color-black;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+    .context__menu__item {
+      padding: 0.5rem 1.5rem;
+      width: 12rem;
+      height: 2rem;
+      &:hover {
+        background-color: $color-infra-red;
+        cursor: pointer;
+      }
+    }
+    span {
+      position: absolute;
+      top: 0.1rem;
+      right: 0.5rem;
+      font-size: 1.5rem;
+      &:hover {
+        cursor: pointer;
+        color: $color-infra-red;
+      }
     }
   }
 }

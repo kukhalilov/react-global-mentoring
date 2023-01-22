@@ -1,7 +1,12 @@
-import React from 'react';
+import Logo from '../logo/Logo';
+import './Footer.scss';
 
 const Footer = () => {
-  return <div>Footer</div>;
+  return (
+    <div className="footer">
+      <Logo />
+    </div>
+  );
 };
 
 export default Footer;
