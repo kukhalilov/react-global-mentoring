@@ -21,7 +21,7 @@ interface AddEditFormProps {
   setIsOpen: (a: boolean) => void;
   setShow?: (a: boolean) => void;
   setMovieWithDetails?: (a: MovieInfo) => void;
-  movieWithDetails?: MovieInfo;
+  movieWithDetails?: MovieInfo | null;
 }
 
 const AddEditForm: React.FC<AddEditFormProps> = ({

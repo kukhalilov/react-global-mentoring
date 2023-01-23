@@ -11,7 +11,7 @@ const AddEditModal: React.FC<{
   addMovie?: (a: MovieInfo) => void;
   setShow?: (a: boolean) => void;
   setMovieWithDetails?: (a: MovieInfo) => void;
-  movieWithDetails?: MovieInfo;
+  movieWithDetails?: MovieInfo | null;
 }> = ({
   setIsOpen,
   addOrEdit,
