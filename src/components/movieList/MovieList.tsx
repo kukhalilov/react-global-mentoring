@@ -9,9 +9,18 @@ import ResultModal from '../resultModal/ResultModal';
 interface MovieListProps {
   movies: MovieInfo[];
   setMovies: (a: MovieInfo[]) => void;
+  setIsMovieDetailsOpen: (a: boolean) => void;
+  setMovieWithDetails: (a: MovieInfo) => void;
+  movieWithDetails: MovieInfo | null;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies, setMovies }) => {
+const MovieList: React.FC<MovieListProps> = ({
+  movies,
+  setMovies,
+  setIsMovieDetailsOpen,
+  setMovieWithDetails,
+  movieWithDetails,
+}) => {
   const [isDeleteResultModalOpen, setIsDeleteResultModalOpen] =
     React.useState(false);
   const [sortState, setSortState] = React.useState('date');
@@ -79,6 +88,9 @@ const MovieList: React.FC<MovieListProps> = ({ movies, setMovies }) => {
               setMovie={setMovie}
               setMovies={setMovies}
               setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
+              setIsMovieDetailsOpen={setIsMovieDetailsOpen}
+              setMovieWithDetails={setMovieWithDetails}
+              movieWithDetails={movieWithDetails}
             />
           ))}
         </div>

@@ -10,7 +10,19 @@ const AddEditModal: React.FC<{
   setMovie?: (a: MovieInfo) => void;
   addMovie?: (a: MovieInfo) => void;
   setShow?: (a: boolean) => void;
-}> = ({ setIsOpen, addOrEdit, movie, movies, setMovie, addMovie, setShow }) => {
+  setMovieWithDetails?: (a: MovieInfo) => void;
+  movieWithDetails?: MovieInfo;
+}> = ({
+  setIsOpen,
+  addOrEdit,
+  movie,
+  movies,
+  setMovie,
+  addMovie,
+  setShow,
+  setMovieWithDetails,
+  movieWithDetails,
+}) => {
   return (
     <>
       <div
@@ -35,6 +47,8 @@ const AddEditModal: React.FC<{
               addMovie={addMovie}
               setIsOpen={setIsOpen}
               setShow={setShow}
+              setMovieWithDetails={setMovieWithDetails}
+              movieWithDetails={movieWithDetails}
             />
           </div>
         </div>

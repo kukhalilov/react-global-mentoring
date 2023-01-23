@@ -8,6 +8,8 @@ interface ConfirmDeleteProps {
   movies: MovieInfo[];
   setMovies: (a: MovieInfo[]) => void;
   setIsDeleteResultModalOpen?: (a: boolean) => void;
+  setIsMovieDetailsOpen: (a: boolean) => void;
+  movieWithDetails: MovieInfo | null;
 }
 
 const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
@@ -16,7 +18,19 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
   movies,
   setMovies,
   setIsDeleteResultModalOpen,
+  setIsMovieDetailsOpen,
+  movieWithDetails,
 }) => {
+  const handleConfirmDelete = () => {
+    const newMovies = movies.filter((m) => m.id !== movie.id);
+    setMovies(newMovies);
+    setIsConfirmDeleteOpen(false);
+    setIsDeleteResultModalOpen && setIsDeleteResultModalOpen(true);
+    if (movieWithDetails && movieWithDetails.id === movie.id) {
+      setIsMovieDetailsOpen(false);
+    }
+  };
+
   return (
     <>
       <div
@@ -35,15 +49,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
           >
             x
           </button>
-          <button
-            className="confirm"
-            onClick={() => {
-              const newMovies = movies.filter((m) => m.id !== movie.id);
-              setMovies(newMovies);
-              setIsConfirmDeleteOpen(false);
-              setIsDeleteResultModalOpen && setIsDeleteResultModalOpen(true);
-            }}
-          >
+          <button className="confirm" onClick={handleConfirmDelete}>
             Confirm
           </button>
         </div>

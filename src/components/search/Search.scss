@@ -3,9 +3,20 @@
 .search {
   display: flex;
   width: 65vw;
+  @media screen and (max-width: 800px) {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    button.search__button {
+      margin: 0;
+    }
+  }
+
   .search__input {
     height: 3rem;
     width: 45rem;
+    max-width: 90%;
     padding-left: 1.5rem;
     padding-right: 1rem;
     background-color: $color-black2;

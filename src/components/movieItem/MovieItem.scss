@@ -10,6 +10,7 @@
 
   img {
     height: 28rem;
+    cursor: pointer;
   }
 
   .title__date {
@@ -37,6 +38,7 @@
   }
 
   .context {
+    cursor: pointer;
     position: absolute;
     top: 1rem;
     right: 1rem;

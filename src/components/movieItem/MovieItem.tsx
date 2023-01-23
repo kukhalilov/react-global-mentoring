@@ -12,6 +12,9 @@ interface MovieItemProps {
   setMovie: (a: MovieInfo) => void;
   setMovies: (a: MovieInfo[]) => void;
   setIsDeleteResultModalOpen?: (a: boolean) => void;
+  setIsMovieDetailsOpen: (a: boolean) => void;
+  setMovieWithDetails: (a: MovieInfo) => void;
+  movieWithDetails: MovieInfo | null;
 }
 
 const MovieItem: React.FC<MovieItemProps> = ({
@@ -20,15 +23,31 @@ const MovieItem: React.FC<MovieItemProps> = ({
   setMovie,
   setMovies,
   setIsDeleteResultModalOpen,
+  setIsMovieDetailsOpen,
+  setMovieWithDetails,
+  movieWithDetails,
 }) => {
   const { triggerRef, nodeRef, show, setShow } = useDetectClickOut(false);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState(false);
   const [showResult, setShowResult] = React.useState(false);
+
+  const handleClick = () => {
+    setIsMovieDetailsOpen(true);
+    setMovieWithDetails(movie);
+  };
+
   return (
     <>
       <div className="movie__item">
-        <img src={movie.url} alt={movie.title} loading="lazy" />
+        <img
+          src={movie.url}
+          alt={movie.title}
+          loading="lazy"
+          onClick={handleClick}
+          onKeyDown={handleClick}
+          role="presentation"
+        />
         <div className="title__date">
           <span>{movie.title}</span>
           <span>{movie.date}</span>
@@ -80,6 +99,8 @@ const MovieItem: React.FC<MovieItemProps> = ({
             movies={movies}
             setMovie={setMovie}
             setShow={setShowResult}
+            setMovieWithDetails={setMovieWithDetails}
+            movieWithDetails={movieWithDetails}
           />
         )}
         {showResult && <ResultModal setShow={setShowResult} isEdited={true} />}
@@ -90,6 +111,8 @@ const MovieItem: React.FC<MovieItemProps> = ({
             movies={movies}
             setMovies={setMovies}
             setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
+            setIsMovieDetailsOpen={setIsMovieDetailsOpen}
+            movieWithDetails={movieWithDetails}
           />
         )}
       </div>
