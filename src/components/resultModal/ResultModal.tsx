@@ -4,7 +4,7 @@ interface ResultModalProps {
   isAdded?: boolean;
   isDeleted?: boolean;
   isEdited?: boolean;
-  setShow?: (a: boolean) => void;
+  setIsAddEditResultModalOpen?: (a: boolean) => void;
   setIsDeleteResultModalOpen?: (a: boolean) => void;
 }
 
@@ -12,12 +12,12 @@ const ResultModal: React.FC<ResultModalProps> = ({
   isAdded,
   isEdited,
   isDeleted,
-  setShow,
+  setIsAddEditResultModalOpen,
   setIsDeleteResultModalOpen,
 }) => {
   const handleClose = () => {
-    if (setShow) {
-      setShow(false);
+    if (setIsAddEditResultModalOpen) {
+      setIsAddEditResultModalOpen(false);
     } else if (setIsDeleteResultModalOpen) {
       setIsDeleteResultModalOpen(false);
     }

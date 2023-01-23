@@ -12,9 +12,10 @@ import MovieDetails from './components/movieDetails/MovieDetails';
 import Logo from './components/logo/Logo';
 
 const App = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isAddMovieModalOpen, setIsAddEditModalOpen] = useState(false);
   const [movies, setMovies] = useState<MovieInfo[]>(moviesData);
-  const [show, setShow] = useState(false);
+  const [isAddEditResultModalOpen, setIsAddEditResultModalOpen] =
+    useState(false);
   const [isMovieDetailsOpen, setIsMovieDetailsOpen] = useState(false);
   const [movieWithDetails, setMovieWithDetails] = useState<MovieInfo | null>(
     null,
@@ -42,20 +43,25 @@ const App = () => {
             <div className="add__movie">
               <button
                 className="add__movie__button"
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsAddEditModalOpen(true)}
               >
                 + Add Movie
               </button>
-              {isOpen && (
+              {isAddMovieModalOpen && (
                 <AddEditModal
-                  setIsOpen={setIsOpen}
+                  setIsAddEditModalOpen={setIsAddEditModalOpen}
                   addOrEdit={'Add'}
                   addMovie={addMovie}
                   movies={movies}
-                  setShow={setShow}
+                  setIsAddEditResultModalOpen={setIsAddEditResultModalOpen}
                 />
               )}
-              {show && <ResultModal setShow={setShow} isAdded={true} />}
+              {isAddEditResultModalOpen && (
+                <ResultModal
+                  setIsAddEditResultModalOpen={setIsAddEditResultModalOpen}
+                  isAdded={true}
+                />
+              )}
             </div>
           </>
         )}

@@ -27,10 +27,16 @@ const MovieItem: React.FC<MovieItemProps> = ({
   setMovieWithDetails,
   movieWithDetails,
 }) => {
-  const { triggerRef, nodeRef, show, setShow } = useDetectClickOut(false);
-  const [isEditOpen, setIsEditOpen] = React.useState(false);
+  const {
+    triggerRef,
+    nodeRef,
+    show: isContextMenuOpen,
+    setShow: setIsContextMenuOpen,
+  } = useDetectClickOut(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState(false);
-  const [showResult, setShowResult] = React.useState(false);
+  const [isEditResultModalOpen, setIsEditResultModalOpen] =
+    React.useState(false);
 
   const handleClick = () => {
     setIsMovieDetailsOpen(true);
@@ -53,22 +59,22 @@ const MovieItem: React.FC<MovieItemProps> = ({
           <span>{movie.date}</span>
         </div>
         <p className="genre">{movie.genres && movie.genres.join(', ')}</p>
-        {!show && (
+        {!isContextMenuOpen && (
           <div className="context" ref={triggerRef}>
             <span
               className="context__icon"
-              onClick={() => setShow(true)}
-              onKeyDown={() => setShow(true)}
+              onClick={() => setIsContextMenuOpen(true)}
+              onKeyDown={() => setIsContextMenuOpen(true)}
               role="presentation"
             ></span>
           </div>
         )}
-        {show && (
+        {isContextMenuOpen && (
           <div className="context__menu" ref={nodeRef}>
             <div
               className="context__menu__item"
-              onClick={() => setIsEditOpen(true)}
-              onKeyDown={() => setIsEditOpen(true)}
+              onClick={() => setIsEditModalOpen(true)}
+              onKeyDown={() => setIsEditModalOpen(true)}
               role="presentation"
             >
               Edit
@@ -83,27 +89,32 @@ const MovieItem: React.FC<MovieItemProps> = ({
             </div>
             <span
               className="close"
-              onClick={() => setShow(false)}
-              onKeyDown={() => setShow(false)}
+              onClick={() => setIsContextMenuOpen(false)}
+              onKeyDown={() => setIsContextMenuOpen(false)}
               role="presentation"
             >
               x
             </span>
           </div>
         )}
-        {isEditOpen && (
+        {isEditModalOpen && (
           <AddEditModal
-            setIsOpen={setIsEditOpen}
+            setIsAddEditModalOpen={setIsEditModalOpen}
             addOrEdit="Edit"
             movie={movie}
             movies={movies}
             setMovie={setMovie}
-            setShow={setShowResult}
+            setIsAddEditResultModalOpen={setIsEditResultModalOpen}
             setMovieWithDetails={setMovieWithDetails}
             movieWithDetails={movieWithDetails}
           />
         )}
-        {showResult && <ResultModal setShow={setShowResult} isEdited={true} />}
+        {isEditResultModalOpen && (
+          <ResultModal
+            setIsAddEditResultModalOpen={setIsEditResultModalOpen}
+            isEdited={true}
+          />
+        )}
         {isConfirmDeleteOpen && (
           <ConfirmDeleteModal
             setIsConfirmDeleteOpen={setIsConfirmDeleteOpen}

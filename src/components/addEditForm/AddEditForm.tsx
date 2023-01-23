@@ -18,8 +18,8 @@ interface AddEditFormProps {
   movies?: MovieInfo[];
   setMovie?: (a: MovieInfo) => void;
   addMovie?: (a: MovieInfo) => void;
-  setIsOpen: (a: boolean) => void;
-  setShow?: (a: boolean) => void;
+  setIsAddEditModalOpen: (a: boolean) => void;
+  setIsAddEditResultModalOpen?: (a: boolean) => void;
   setMovieWithDetails?: (a: MovieInfo) => void;
   movieWithDetails?: MovieInfo | null;
 }
@@ -29,8 +29,8 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
   movies,
   setMovie,
   addMovie,
-  setIsOpen,
-  setShow,
+  setIsAddEditModalOpen,
+  setIsAddEditResultModalOpen,
   setMovieWithDetails,
   movieWithDetails,
 }) => {
@@ -70,12 +70,12 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
     };
     if (addMovie) {
       addMovie(updatedSingleMovie);
-      setIsOpen(false);
-      setShow && setShow(true);
+      setIsAddEditModalOpen(false);
+      setIsAddEditResultModalOpen && setIsAddEditResultModalOpen(true);
     } else {
       setMovie && setMovie(updatedSingleMovie);
-      setIsOpen(false);
-      setShow && setShow(true);
+      setIsAddEditModalOpen(false);
+      setIsAddEditResultModalOpen && setIsAddEditResultModalOpen(true);
       if (
         movieWithDetails &&
         setMovieWithDetails &&

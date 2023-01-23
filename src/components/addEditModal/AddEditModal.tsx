@@ -3,23 +3,23 @@ import './AddEditModal.scss';
 import AddEditForm, { MovieInfo } from '../addEditForm/AddEditForm';
 
 const AddEditModal: React.FC<{
-  setIsOpen: (a: boolean) => void;
+  setIsAddEditModalOpen: (a: boolean) => void;
   addOrEdit: string;
   movie?: MovieInfo;
   movies?: MovieInfo[];
   setMovie?: (a: MovieInfo) => void;
   addMovie?: (a: MovieInfo) => void;
-  setShow?: (a: boolean) => void;
+  setIsAddEditResultModalOpen?: (a: boolean) => void;
   setMovieWithDetails?: (a: MovieInfo) => void;
   movieWithDetails?: MovieInfo | null;
 }> = ({
-  setIsOpen,
+  setIsAddEditModalOpen,
   addOrEdit,
   movie,
   movies,
   setMovie,
   addMovie,
-  setShow,
+  setIsAddEditResultModalOpen,
   setMovieWithDetails,
   movieWithDetails,
 }) => {
@@ -27,8 +27,8 @@ const AddEditModal: React.FC<{
     <>
       <div
         className="darkBG"
-        onClick={() => setIsOpen(false)}
-        onKeyDown={() => setIsOpen(false)}
+        onClick={() => setIsAddEditModalOpen(false)}
+        onKeyDown={() => setIsAddEditModalOpen(false)}
         role="presentation"
       />
       <div className="centered">
@@ -36,7 +36,10 @@ const AddEditModal: React.FC<{
           <div className="modalContent">
             <div className="modalHeader">
               <h1 className="title">{addOrEdit} Movie</h1>
-              <button className="closeBtn" onClick={() => setIsOpen(false)}>
+              <button
+                className="closeBtn"
+                onClick={() => setIsAddEditModalOpen(false)}
+              >
                 x
               </button>
             </div>
@@ -45,8 +48,8 @@ const AddEditModal: React.FC<{
               movies={movies}
               setMovie={setMovie}
               addMovie={addMovie}
-              setIsOpen={setIsOpen}
-              setShow={setShow}
+              setIsAddEditModalOpen={setIsAddEditModalOpen}
+              setIsAddEditResultModalOpen={setIsAddEditResultModalOpen}
               setMovieWithDetails={setMovieWithDetails}
               movieWithDetails={movieWithDetails}
             />
