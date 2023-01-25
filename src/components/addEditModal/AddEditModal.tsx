@@ -1,34 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './AddEditModal.scss';
 import AddEditForm, { MovieInfo } from '../addEditForm/AddEditForm';
+import { MovieContext } from '../../context/MovieContext';
+import { ACTIONS } from '../../context/MovieReducer';
 
 const AddEditModal: React.FC<{
-  setIsAddEditModalOpen: (a: boolean) => void;
-  addOrEdit: string;
   movie?: MovieInfo;
-  movies?: MovieInfo[];
-  setMovie?: (a: MovieInfo) => void;
-  addMovie?: (a: MovieInfo) => void;
-  setIsAddEditResultModalOpen?: (a: boolean) => void;
-  setMovieWithDetails?: (a: MovieInfo) => void;
-  movieWithDetails?: MovieInfo | null;
-}> = ({
-  setIsAddEditModalOpen,
-  addOrEdit,
-  movie,
-  movies,
-  setMovie,
-  addMovie,
-  setIsAddEditResultModalOpen,
-  setMovieWithDetails,
-  movieWithDetails,
-}) => {
+  addOrEdit: string;
+  setIsEditModalOpen?: (a: boolean) => void;
+  setIsEditResultModalOpen?: (a: boolean) => void;
+}> = ({ movie, addOrEdit, setIsEditModalOpen, setIsEditResultModalOpen }) => {
+  const { dispatch } = useContext(MovieContext);
+
+  const closeModal = () => {
+    dispatch({
+      type: ACTIONS.SET_IS_ADD_MODAL_OPEN,
+      payload: false,
+    });
+    setIsEditModalOpen && setIsEditModalOpen(false);
+  };
+
   return (
     <>
       <div
         className="darkBG"
-        onClick={() => setIsAddEditModalOpen(false)}
-        onKeyDown={() => setIsAddEditModalOpen(false)}
+        onClick={closeModal}
+        onKeyDown={closeModal}
         role="presentation"
       />
       <div className="centered">
@@ -36,22 +33,15 @@ const AddEditModal: React.FC<{
           <div className="modalContent">
             <div className="modalHeader">
               <h1 className="title">{addOrEdit} Movie</h1>
-              <button
-                className="closeBtn"
-                onClick={() => setIsAddEditModalOpen(false)}
-              >
+              <button className="closeBtn" onClick={closeModal}>
                 x
               </button>
             </div>
             <AddEditForm
+              addOrEdit={addOrEdit}
               movie={movie}
-              movies={movies}
-              setMovie={setMovie}
-              addMovie={addMovie}
-              setIsAddEditModalOpen={setIsAddEditModalOpen}
-              setIsAddEditResultModalOpen={setIsAddEditResultModalOpen}
-              setMovieWithDetails={setMovieWithDetails}
-              movieWithDetails={movieWithDetails}
+              setIsEditModalOpen={setIsEditModalOpen}
+              setIsEditResultModalOpen={setIsEditResultModalOpen}
             />
           </div>
         </div>

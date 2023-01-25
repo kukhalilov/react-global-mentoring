@@ -1,20 +1,17 @@
-import React, { useEffect } from 'react';
-import { MovieInfo } from '../addEditForm/AddEditForm';
+import React, { useEffect, useContext } from 'react';
 import './MovieDetails.scss';
 import { FaSearch } from 'react-icons/fa';
+import { MovieContext } from '../../context/MovieContext';
+import { ACTIONS } from '../../context/MovieReducer';
 
-interface MovieDetailsProps {
-  movie: MovieInfo | null;
-  setIsMovieDetailsOpen: (a: boolean) => void;
-}
+const MovieDetails = () => {
+  const { state, dispatch } = useContext(MovieContext);
+  const { movieForDetailsView: movie } = state;
 
-const MovieDetails: React.FC<MovieDetailsProps> = ({
-  movie,
-  setIsMovieDetailsOpen,
-}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [movie]);
+
   return (
     <div className="movie-details">
       {movie && (
@@ -55,7 +52,14 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
             <button
               type="button"
               onClick={() => {
-                setIsMovieDetailsOpen(false);
+                dispatch({
+                  type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN,
+                  payload: false,
+                });
+                dispatch({
+                  type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW,
+                  payload: null,
+                });
               }}
             >
               <FaSearch className="search-icon" />

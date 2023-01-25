@@ -1,6 +1,8 @@
 import Multiselect from 'multiselect-react-dropdown';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './AddEditForm.scss';
+import { MovieContext } from '../../context/MovieContext';
+import { ACTIONS } from '../../context/MovieReducer';
 
 export interface MovieInfo {
   id?: number;
@@ -15,25 +17,20 @@ export interface MovieInfo {
 
 interface AddEditFormProps {
   movie?: MovieInfo;
-  movies?: MovieInfo[];
-  setMovie?: (a: MovieInfo) => void;
-  addMovie?: (a: MovieInfo) => void;
-  setIsAddEditModalOpen: (a: boolean) => void;
-  setIsAddEditResultModalOpen?: (a: boolean) => void;
-  setMovieWithDetails?: (a: MovieInfo) => void;
-  movieWithDetails?: MovieInfo | null;
+  addOrEdit?: string;
+  setIsEditModalOpen?: (a: boolean) => void;
+  setIsEditResultModalOpen?: (a: boolean) => void;
 }
 
 const AddEditForm: React.FC<AddEditFormProps> = ({
   movie,
-  movies,
-  setMovie,
-  addMovie,
-  setIsAddEditModalOpen,
-  setIsAddEditResultModalOpen,
-  setMovieWithDetails,
-  movieWithDetails,
+  addOrEdit,
+  setIsEditModalOpen,
+  setIsEditResultModalOpen,
 }) => {
+  const { state, dispatch } = useContext(MovieContext);
+  const { movies, movieForDetailsView } = state;
+
   const [options] = useState([
     'Action',
     'Adventure',
@@ -63,25 +60,29 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+
     const updatedSingleMovie = {
       ...singleMovie,
       rating: Number(singleMovie.rating),
       runtime: Number(singleMovie.runtime),
     };
-    if (addMovie) {
-      addMovie(updatedSingleMovie);
-      setIsAddEditModalOpen(false);
-      setIsAddEditResultModalOpen && setIsAddEditResultModalOpen(true);
+
+    if (addOrEdit === 'Add') {
+      dispatch({ type: ACTIONS.ADD_MOVIE, payload: updatedSingleMovie });
+      dispatch({ type: ACTIONS.SET_IS_ADD_MODAL_OPEN, payload: false });
+      dispatch({ type: ACTIONS.SET_IS_ADD_RESULT_MODAL_OPEN, payload: true });
     } else {
-      setMovie && setMovie(updatedSingleMovie);
-      setIsAddEditModalOpen(false);
-      setIsAddEditResultModalOpen && setIsAddEditResultModalOpen(true);
+      dispatch({ type: ACTIONS.EDIT_MOVIE, payload: updatedSingleMovie });
+      setIsEditModalOpen && setIsEditModalOpen(false);
+      setIsEditResultModalOpen && setIsEditResultModalOpen(true);
       if (
-        movieWithDetails &&
-        setMovieWithDetails &&
-        movieWithDetails.id === updatedSingleMovie.id
+        movieForDetailsView &&
+        movieForDetailsView.id === updatedSingleMovie.id
       ) {
-        setMovieWithDetails(updatedSingleMovie);
+        dispatch({
+          type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW,
+          payload: updatedSingleMovie,
+        });
       }
     }
   };

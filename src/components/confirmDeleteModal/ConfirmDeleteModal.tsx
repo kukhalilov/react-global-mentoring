@@ -1,42 +1,47 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './ConfirmDeleteModal.scss';
+import { MovieContext } from '../../context/MovieContext';
+import { ACTIONS } from '../../context/MovieReducer';
 import { MovieInfo } from '../addEditForm/AddEditForm';
 
-interface ConfirmDeleteProps {
-  setIsConfirmDeleteOpen: (a: boolean) => void;
+interface ConfirmDeleteModalProps {
   movie: MovieInfo;
-  movies: MovieInfo[];
-  setMovies: (a: MovieInfo[]) => void;
-  setIsDeleteResultModalOpen?: (a: boolean) => void;
-  setIsMovieDetailsOpen: (a: boolean) => void;
-  movieWithDetails: MovieInfo | null;
+  setIsDeleteModalOpen: (a: boolean) => void;
+  setIsDeleteResultModalOpen: (a: boolean) => void;
 }
 
-const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
-  setIsConfirmDeleteOpen,
+const ConfirmDelete: React.FC<ConfirmDeleteModalProps> = ({
   movie,
-  movies,
-  setMovies,
+  setIsDeleteModalOpen,
   setIsDeleteResultModalOpen,
-  setIsMovieDetailsOpen,
-  movieWithDetails,
 }) => {
+  const { state, dispatch } = useContext(MovieContext);
+  const { movieForDetailsView } = state;
+  console.log('movie', movie);
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   const handleConfirmDelete = () => {
-    const newMovies = movies.filter((m) => m.id !== movie.id);
-    setMovies(newMovies);
-    setIsConfirmDeleteOpen(false);
-    setIsDeleteResultModalOpen && setIsDeleteResultModalOpen(true);
-    if (movieWithDetails && movieWithDetails.id === movie.id) {
-      setIsMovieDetailsOpen(false);
+    closeDeleteModal();
+    if (movieForDetailsView && movieForDetailsView.id === movie.id) {
+      dispatch({ type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW, payload: null });
+      dispatch({ type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN, payload: false });
     }
+    dispatch({
+      type: ACTIONS.DELETE_MOVIE,
+      payload: movie.id,
+    });
+    setIsDeleteResultModalOpen(true);
   };
 
   return (
     <>
       <div
         className="confirm-delete-modal__overlay"
-        onClick={() => setIsConfirmDeleteOpen(false)}
-        onKeyDown={() => setIsConfirmDeleteOpen(false)}
+        onClick={closeDeleteModal}
+        onKeyDown={closeDeleteModal}
         role="presentation"
       ></div>
       <div className="confirm-delete-modal">
@@ -45,7 +50,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
           <p>Are you sure you want to delete this movie?</p>
           <button
             className="confirm-delete-modal__close"
-            onClick={() => setIsConfirmDeleteOpen(false)}
+            onClick={closeDeleteModal}
           >
             x
           </button>

@@ -1,31 +1,21 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import './MovieItem.scss';
 import useDetectClickOut from '../../hooks/useDetectClickOut';
 import AddEditModal from '../addEditModal/AddEditModal';
 import { MovieInfo } from '../addEditForm/AddEditForm';
 import ResultModal from '../resultModal/ResultModal';
 import ConfirmDeleteModal from '../confirmDeleteModal/ConfirmDeleteModal';
+import { ACTIONS } from '../../context/MovieReducer';
+import { MovieContext } from '../../context/MovieContext';
 
 interface MovieItemProps {
   movie: MovieInfo;
-  movies: MovieInfo[];
-  setMovie: (a: MovieInfo) => void;
-  setMovies: (a: MovieInfo[]) => void;
-  setIsDeleteResultModalOpen?: (a: boolean) => void;
-  setIsMovieDetailsOpen: (a: boolean) => void;
-  setMovieWithDetails: (a: MovieInfo) => void;
-  movieWithDetails: MovieInfo | null;
+  setIsDeleteResultModalOpen: (a: boolean) => void;
 }
 
 const MovieItem: React.FC<MovieItemProps> = ({
   movie,
-  movies,
-  setMovie,
-  setMovies,
   setIsDeleteResultModalOpen,
-  setIsMovieDetailsOpen,
-  setMovieWithDetails,
-  movieWithDetails,
 }) => {
   const {
     triggerRef,
@@ -33,14 +23,24 @@ const MovieItem: React.FC<MovieItemProps> = ({
     show: isContextMenuOpen,
     setShow: setIsContextMenuOpen,
   } = useDetectClickOut(false);
-  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState(false);
-  const [isEditResultModalOpen, setIsEditResultModalOpen] =
-    React.useState(false);
 
-  const handleClick = () => {
-    setIsMovieDetailsOpen(true);
-    setMovieWithDetails(movie);
+  const { dispatch } = useContext(MovieContext);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditResultModalOpen, setIsEditResultModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const openEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleImgClick = () => {
+    dispatch({ type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW, payload: movie });
+    dispatch({ type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN, payload: true });
   };
 
   return (
@@ -50,8 +50,8 @@ const MovieItem: React.FC<MovieItemProps> = ({
           src={movie.url}
           alt={movie.title}
           loading="lazy"
-          onClick={handleClick}
-          onKeyDown={handleClick}
+          onClick={handleImgClick}
+          onKeyDown={handleImgClick}
           role="presentation"
         />
         <div className="title__date">
@@ -73,16 +73,16 @@ const MovieItem: React.FC<MovieItemProps> = ({
           <div className="context__menu" ref={nodeRef}>
             <div
               className="context__menu__item"
-              onClick={() => setIsEditModalOpen(true)}
-              onKeyDown={() => setIsEditModalOpen(true)}
+              onClick={openEditModal}
+              onKeyDown={openEditModal}
               role="presentation"
             >
               Edit
             </div>
             <div
               className="context__menu__item"
-              onClick={() => setIsConfirmDeleteOpen(true)}
-              onKeyDown={() => setIsConfirmDeleteOpen(true)}
+              onClick={openDeleteModal}
+              onKeyDown={openDeleteModal}
               role="presentation"
             >
               Delete
@@ -99,31 +99,23 @@ const MovieItem: React.FC<MovieItemProps> = ({
         )}
         {isEditModalOpen && (
           <AddEditModal
-            setIsAddEditModalOpen={setIsEditModalOpen}
+            setIsEditModalOpen={setIsEditModalOpen}
+            setIsEditResultModalOpen={setIsEditResultModalOpen}
             addOrEdit="Edit"
             movie={movie}
-            movies={movies}
-            setMovie={setMovie}
-            setIsAddEditResultModalOpen={setIsEditResultModalOpen}
-            setMovieWithDetails={setMovieWithDetails}
-            movieWithDetails={movieWithDetails}
           />
         )}
         {isEditResultModalOpen && (
           <ResultModal
-            setIsAddEditResultModalOpen={setIsEditResultModalOpen}
+            setIsEditResultModalOpen={setIsEditResultModalOpen}
             isEdited={true}
           />
         )}
-        {isConfirmDeleteOpen && (
+        {isDeleteModalOpen && (
           <ConfirmDeleteModal
-            setIsConfirmDeleteOpen={setIsConfirmDeleteOpen}
-            movie={movie}
-            movies={movies}
-            setMovies={setMovies}
+            setIsDeleteModalOpen={setIsDeleteModalOpen}
             setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
-            setIsMovieDetailsOpen={setIsMovieDetailsOpen}
-            movieWithDetails={movieWithDetails}
+            movie={movie}
           />
         )}
       </div>
