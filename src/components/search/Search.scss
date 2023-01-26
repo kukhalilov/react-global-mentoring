@@ -1,0 +1,45 @@
+@use '../../utils/variables' as *;
+
+.search {
+  display: flex;
+  width: 65vw;
+  @media screen and (max-width: 800px) {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    button.search__button {
+      margin: 0;
+    }
+  }
+
+  .search__input {
+    height: 3rem;
+    width: 45rem;
+    max-width: 90%;
+    padding-left: 1.5rem;
+    padding-right: 1rem;
+    background-color: $color-black2;
+    outline: none;
+    &::placeholder {
+      color: $color-white;
+      opacity: 0.5;
+    }
+    border: none;
+    font-size: 1.3rem;
+    border-radius: 4px;
+    color: $color-white;
+  }
+  .search__button {
+    width: 14rem;
+    height: 3rem;
+    margin-left: 1.5rem;
+    font-size: 1.3rem;
+    background-color: $color-infra-red;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    color: $color-white;
+    text-transform: uppercase;
+  }
+}

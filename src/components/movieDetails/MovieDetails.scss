@@ -1,0 +1,117 @@
+@use '../../utils/variables' as *;
+
+.movie-details {
+  position: relative;
+  max-width: 100%;
+  min-height: 26rem;
+
+  background-color: $color-black;
+
+  .movie-details__content {
+    display: flex;
+    width: 100%;
+    @media screen and (max-width: 1024px) {
+      flex-direction: column;
+    }
+
+    img {
+      height: 22rem;
+      width: 17rem;
+    }
+
+    .movie-details__content__left {
+      padding: 3rem 5rem 1rem 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .movie-details__content__right {
+      padding-top: 3rem;
+      padding-right: 10%;
+      @media screen and (max-width: 1024px) {
+        padding: 5%;
+        .title-rating {
+          text-align: center;
+          justify-content: center;
+          h1 {
+            flex-direction: column;
+            align-items: center;
+          }
+        }
+        .genres {
+          justify-content: center;
+        }
+        .date-runtime {
+          display: flex;
+          justify-content: center;
+        }
+      }
+      .movie-details__content__right__header {
+        .title-rating {
+          display: flex;
+          align-items: center;
+          h1 {
+            font-size: 2.4rem;
+            line-height: 3rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            color: $color-white;
+            display: inline-flex;
+            .rating {
+              width: 3rem;
+              height: 3rem;
+              border: 1px solid $color-white;
+              border-radius: 50%;
+              display: inline-flex;
+              justify-content: center;
+              align-items: center;
+              margin-left: 1rem;
+              font-size: 1.4rem;
+              color: $color-white;
+              @media screen and (max-width: 1024px) {
+                margin: 0.5rem 0 0 0;
+              }
+            }
+          }
+        }
+        .genres {
+          font-size: 1rem;
+          color: $color-white;
+          opacity: 0.5;
+        }
+        .date-runtime {
+          font-size: 1.5rem;
+          color: $color-infra-red;
+          span:first-child {
+            margin-right: 2rem;
+          }
+        }
+      }
+      .overview p {
+        overflow-y: hidden;
+        font-size: 1.4rem;
+        color: $color-white;
+        opacity: 0.5;
+        margin-top: 1.5rem;
+      }
+    }
+  }
+  .movie-details__back-to-search button {
+    position: absolute;
+    top: 2rem;
+    right: 5%;
+    background-color: $color-black;
+    border: none;
+    cursor: pointer;
+    @media screen and (max-width: 1024px) {
+      top: 0.5rem;
+    }
+    .search-icon {
+      color: $color-infra-red;
+      font-size: 2rem;
+      transform: rotateY(180deg);
+    }
+  }
+}
