@@ -1,0 +1,32 @@
+@use '../../utils/variables' as *;
+
+.movie__list {
+  background-color: $color-black;
+  padding: 1.2rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+
+  .movie__list__header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  hr {
+    margin-top: 1rem;
+    width: 100%;
+    background-color: $color-light-grey;
+  }
+
+  .count {
+    font-size: 1.3rem;
+    color: $color-white;
+  }
+
+  .movie__list__content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.6rem;
+  }
+}
