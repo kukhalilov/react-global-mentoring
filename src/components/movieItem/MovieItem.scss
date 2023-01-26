@@ -1,0 +1,62 @@
+@use '../../utils/variables' as *;
+
+.movie__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  height: 34rem;
+  color: $color-white;
+
+  img {
+    height: 28rem;
+  }
+
+  .title__date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.2rem;
+    span:first-child {
+      font-size: 1.2rem;
+      opacity: 0.7;
+    }
+    span:last-child {
+      font-size: 1rem;
+      opacity: 0.7;
+      display: inline-block;
+      border: 2px solid $color-dark-grey;
+      padding: 6px 14px;
+    }
+  }
+
+  .genre {
+    font-size: 1rem;
+    opacity: 0.5;
+    margin-top: 0;
+  }
+
+  .context {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: #2a202d;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.196596);
+    border-radius: 50%;
+    .context__icon::after {
+      content: '\2807';
+      font-size: 1rem;
+      margin-left: 0.3rem;
+    }
+  }
+  &:hover {
+    .context {
+      display: flex;
+    }
+  }
+}

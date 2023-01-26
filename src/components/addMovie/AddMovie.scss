@@ -1,0 +1,13 @@
+@use '../../utils/variables' as *;
+
+.add-movie {
+  width: 11rem;
+  height: 2.8rem;
+  background-color: $color-light-grey;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  color: $color-infra-red;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
