@@ -47,7 +47,7 @@ const MovieList = () => {
           )}
           {isError && 'error' in error && (
             <div className="movie__list__error">
-              {JSON.stringify(error.error)}
+              <h2>Failed to fetch</h2>
             </div>
           )}
           {isSuccess &&
