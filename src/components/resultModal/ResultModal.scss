@@ -30,6 +30,21 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    .error__icon {
+      width: 4rem;
+      height: 4rem;
+      background-color: $color-infra-red;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: $color-white;
+      }
+    }
     h2 {
       font-size: 2rem;
       text-transform: uppercase;

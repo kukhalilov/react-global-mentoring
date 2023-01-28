@@ -1,22 +1,23 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import './MovieItem.scss';
 import useDetectClickOut from '../../hooks/useDetectClickOut';
 import AddEditModal from '../addEditModal/AddEditModal';
-import { MovieInfo } from '../addEditForm/AddEditForm';
 import ResultModal from '../resultModal/ResultModal';
 import ConfirmDeleteModal from '../confirmDeleteModal/ConfirmDeleteModal';
-import { ACTIONS } from '../../context/MovieReducer';
-import { MovieContext } from '../../context/MovieContext';
+import Movie from '../../types/Movie';
+import { RootState } from '../../state/store';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setEditModalMovie,
+  setDeleteModalMovie,
+} from '../../state/features/modalsSlice';
+import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
 
 interface MovieItemProps {
-  movie: MovieInfo;
-  setIsDeleteResultModalOpen: (a: boolean) => void;
+  movie: Movie;
 }
 
-const MovieItem: React.FC<MovieItemProps> = ({
-  movie,
-  setIsDeleteResultModalOpen,
-}) => {
+const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
   const {
     triggerRef,
     nodeRef,
@@ -24,39 +25,40 @@ const MovieItem: React.FC<MovieItemProps> = ({
     setShow: setIsContextMenuOpen,
   } = useDetectClickOut(false);
 
-  const { dispatch } = useContext(MovieContext);
-
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isEditResultModalOpen, setIsEditResultModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const modalsState = useSelector((state: RootState) => state.modals);
 
   const openEditModal = () => {
-    setIsEditModalOpen(true);
+    dispatch(setEditModalMovie(movie));
+    setIsContextMenuOpen(false);
   };
 
   const openDeleteModal = () => {
-    setIsDeleteModalOpen(true);
+    dispatch(setDeleteModalMovie(movie));
+    setIsContextMenuOpen(false);
   };
 
   const handleImgClick = () => {
-    dispatch({ type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW, payload: movie });
-    dispatch({ type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN, payload: true });
+    dispatch(setSelectedMovie(movie));
   };
 
   return (
     <>
       <div className="movie__item">
         <img
-          src={movie.url}
+          src={movie.poster_path}
           alt={movie.title}
           loading="lazy"
           onClick={handleImgClick}
           onKeyDown={handleImgClick}
           role="presentation"
+          onError={(e) => {
+            e.currentTarget.src = 'https://dummyimage.com/300x450/333/aaa';
+          }}
         />
         <div className="title__date">
           <span>{movie.title}</span>
-          <span>{movie.date}</span>
+          <span>{movie.release_date}</span>
         </div>
         <p className="genre">{movie.genres && movie.genres.join(', ')}</p>
         {!isContextMenuOpen && (
@@ -97,27 +99,18 @@ const MovieItem: React.FC<MovieItemProps> = ({
             </span>
           </div>
         )}
-        {isEditModalOpen && (
-          <AddEditModal
-            setIsEditModalOpen={setIsEditModalOpen}
-            setIsEditResultModalOpen={setIsEditResultModalOpen}
-            addOrEdit="Edit"
-            movie={movie}
-          />
-        )}
-        {isEditResultModalOpen && (
-          <ResultModal
-            setIsEditResultModalOpen={setIsEditResultModalOpen}
-            isEdited={true}
-          />
-        )}
-        {isDeleteModalOpen && (
-          <ConfirmDeleteModal
-            setIsDeleteModalOpen={setIsDeleteModalOpen}
-            setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
-            movie={movie}
-          />
-        )}
+        {!modalsState.isEditResultModalOpen &&
+          modalsState.editModalMovie &&
+          modalsState.editModalMovie.id == movie.id && (
+            <AddEditModal addOrEdit="Edit" />
+          )}
+        {modalsState.isEditResultModalOpen &&
+          modalsState.editModalMovie &&
+          modalsState.editModalMovie.id == movie.id && (
+            <ResultModal isEdited={true} />
+          )}
+        {modalsState.deleteModalMovie &&
+          modalsState.deleteModalMovie.id == movie.id && <ConfirmDeleteModal />}
       </div>
     </>
   );

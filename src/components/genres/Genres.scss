@@ -5,8 +5,18 @@
   flex-wrap: wrap;
   gap: 1.8rem;
   text-transform: uppercase;
+  margin-right: 5%;
   .genres__item {
+    cursor: pointer;
     font-size: 1rem;
     color: $color-white;
+    &:hover {
+      color: $color-infra-red;
+    }
+    &.active {
+      color: $color-infra-red;
+      text-decoration: underline;
+      text-underline-offset: 0.2rem;
+    }
   }
 }

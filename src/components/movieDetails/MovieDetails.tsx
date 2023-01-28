@@ -1,12 +1,15 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import './MovieDetails.scss';
 import { FaSearch } from 'react-icons/fa';
-import { MovieContext } from '../../context/MovieContext';
-import { ACTIONS } from '../../context/MovieReducer';
+import { RootState } from '../../state/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
 
 const MovieDetails = () => {
-  const { state, dispatch } = useContext(MovieContext);
-  const { movieForDetailsView: movie } = state;
+  const dispatch = useDispatch();
+  const movie = useSelector(
+    (state: RootState) => state.movieDetails.selectedMovie,
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -18,21 +21,29 @@ const MovieDetails = () => {
         <>
           <div className="movie-details__content">
             <div className="movie-details__content__left">
-              <img src={movie.url} alt={movie.title} loading="lazy" />
+              <img
+                src={movie.poster_path}
+                alt={movie.title}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    'https://dummyimage.com/300x450/333/aaa';
+                }}
+              />
             </div>
             <div className="movie-details__content__right">
               <div className="movie-details__content__right__header">
                 <div className="title-rating">
                   <h1>
                     {movie.title}
-                    <span className="rating">{movie.rating}</span>
+                    <span className="rating">{movie.vote_average}</span>
                   </h1>
                 </div>
                 <div className="genres">
                   <p>{movie.genres && movie.genres.join(', ')}</p>
                 </div>
                 <div className="date-runtime">
-                  <span>{movie.date}</span>
+                  <span>{movie.release_date}</span>
                   <span>
                     {movie.runtime &&
                       (movie.runtime < 60
@@ -52,14 +63,7 @@ const MovieDetails = () => {
             <button
               type="button"
               onClick={() => {
-                dispatch({
-                  type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN,
-                  payload: false,
-                });
-                dispatch({
-                  type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW,
-                  payload: null,
-                });
+                dispatch(setSelectedMovie(null));
               }}
             >
               <FaSearch className="search-icon" />

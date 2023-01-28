@@ -1,90 +1,89 @@
 import Multiselect from 'multiselect-react-dropdown';
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import './AddEditForm.scss';
-import { MovieContext } from '../../context/MovieContext';
-import { ACTIONS } from '../../context/MovieReducer';
-
-export interface MovieInfo {
-  id?: number;
-  title?: string;
-  url?: string;
-  genres?: Array<string>;
-  date?: string;
-  rating?: number | string;
-  runtime?: number | string;
-  overview?: string;
-}
+import { RootState } from '../../state/store';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setIsAddModalOpen,
+  setIsAddResultModalOpen,
+  setIsEditResultModalOpen,
+  setIsThereErrorInResult,
+} from '../../state/features/modalsSlice';
+import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
+import {
+  useAddMovieMutation,
+  useUpdateMovieMutation,
+} from '../../state/api/moviesApi';
+import { genres } from '../genres/Genres';
 
 interface AddEditFormProps {
-  movie?: MovieInfo;
   addOrEdit?: string;
-  setIsEditModalOpen?: (a: boolean) => void;
-  setIsEditResultModalOpen?: (a: boolean) => void;
 }
 
-const AddEditForm: React.FC<AddEditFormProps> = ({
-  movie,
-  addOrEdit,
-  setIsEditModalOpen,
-  setIsEditResultModalOpen,
-}) => {
-  const { state, dispatch } = useContext(MovieContext);
-  const { movies, movieForDetailsView } = state;
-
-  const [options] = useState([
-    'Action',
-    'Adventure',
-    'Comedy',
-    'Crime',
-    'Drama',
-    'Fantasy',
-    'Horror',
-    'Mystery',
-    'Thriller',
-  ]);
+const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
+  const dispatch = useDispatch();
+  const movieForDetailsView = useSelector(
+    (state: RootState) => state.movieDetails.selectedMovie,
+  );
+  const movie = useSelector((state: RootState) => state.modals.editModalMovie);
+  const [addMovie] = useAddMovieMutation();
+  const [updateMovie] = useUpdateMovieMutation();
 
   const initialValue = {
-    id: movie ? movie.id : movies && movies.length + 1,
+    id: movie ? movie.id : 0,
     title: movie ? movie.title : '',
-    url: movie ? movie.url : '',
+    poster_path: movie ? movie.poster_path : '',
     genres: movie ? movie.genres : [],
-    date: movie ? movie.date : '',
+    release_date: movie ? movie.release_date : '',
     overview: movie ? movie.overview : '',
-    rating: movie ? movie.rating : '',
+    vote_average: movie ? movie.vote_average : '',
     runtime: movie ? movie.runtime : '',
+    tagline: movie ? movie.tagline : '',
+    vote_count: movie ? movie.vote_count : 0,
+    budget: movie ? movie.budget : 0,
+    revenue: movie ? movie.revenue : 0,
   };
 
-  const [singleMovie, setSingleMovie] = useState<MovieInfo>(initialValue);
+  const [singleMovie, setSingleMovie] = useState(initialValue);
 
   const multiselectRef = React.createRef<Multiselect>();
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.preventDefault();
 
     const updatedSingleMovie = {
       ...singleMovie,
-      rating: Number(singleMovie.rating),
+      id: movie ? movie.id : undefined,
+      vote_average: Number(singleMovie.vote_average),
       runtime: Number(singleMovie.runtime),
+      tagline: singleMovie.tagline == '' ? undefined : singleMovie.tagline,
     };
 
     if (addOrEdit === 'Add') {
-      dispatch({ type: ACTIONS.ADD_MOVIE, payload: updatedSingleMovie });
-      dispatch({ type: ACTIONS.SET_IS_ADD_MODAL_OPEN, payload: false });
-      dispatch({ type: ACTIONS.SET_IS_ADD_RESULT_MODAL_OPEN, payload: true });
+      const res = await addMovie(updatedSingleMovie);
+      if ('error' in res) {
+        console.log(res.error);
+        dispatch(setIsThereErrorInResult(true));
+      }
+      dispatch(setIsAddModalOpen(false));
+      dispatch(setIsAddResultModalOpen(true));
     } else {
-      dispatch({ type: ACTIONS.EDIT_MOVIE, payload: updatedSingleMovie });
-      setIsEditModalOpen && setIsEditModalOpen(false);
-      setIsEditResultModalOpen && setIsEditResultModalOpen(true);
-      if (
-        movieForDetailsView &&
-        movieForDetailsView.id === updatedSingleMovie.id
-      ) {
-        dispatch({
-          type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW,
-          payload: updatedSingleMovie,
-        });
+      const res = await updateMovie(updatedSingleMovie);
+      if (!('error' in res)) {
+        if (
+          movieForDetailsView &&
+          movieForDetailsView.id === updatedSingleMovie.id
+        ) {
+          dispatch(setSelectedMovie(updatedSingleMovie));
+        }
+      } else {
+        console.log(res.error);
+        dispatch(setIsThereErrorInResult(true));
       }
     }
+    dispatch(setIsEditResultModalOpen(true));
   };
 
   return (
@@ -101,19 +100,21 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
             onChange={(e) => {
               setSingleMovie({ ...singleMovie, title: e.target.value });
             }}
+            required
           />
         </div>
         <div className="form__control">
-          <label htmlFor="movie_url">Movie URL</label>
+          <label htmlFor="movie_poster_path">Movie URL</label>
           <input
             type="text"
-            name="movie_url"
-            id="movie_url"
+            name="movie_poster_path"
+            id="movie_poster_path"
             placeholder="https://"
-            value={singleMovie.url}
+            value={singleMovie.poster_path}
             onChange={(e) =>
-              setSingleMovie({ ...singleMovie, url: e.target.value })
+              setSingleMovie({ ...singleMovie, poster_path: e.target.value })
             }
+            required
           />
         </div>
         <div className="form__control genre">
@@ -121,7 +122,7 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
           <Multiselect
             className="multiselect"
             isObject={false}
-            options={options}
+            options={genres}
             showCheckbox={true}
             displayValue="name"
             placeholder="Select Genre"
@@ -152,9 +153,9 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
             name="release_date"
             id="release_date"
             placeholder="Select Date"
-            value={singleMovie.date}
+            value={singleMovie.release_date!}
             onChange={(e) =>
-              setSingleMovie({ ...singleMovie, date: e.target.value })
+              setSingleMovie({ ...singleMovie, release_date: e.target.value })
             }
             required
           />
@@ -166,9 +167,9 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
             name="rating"
             id="rating"
             placeholder="7.8"
-            value={singleMovie.rating}
+            value={singleMovie.vote_average!}
             onChange={(e) =>
-              setSingleMovie({ ...singleMovie, rating: e.target.value })
+              setSingleMovie({ ...singleMovie, vote_average: e.target.value })
             }
           />
         </div>
@@ -183,6 +184,7 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
             onChange={(e) =>
               setSingleMovie({ ...singleMovie, runtime: e.target.value })
             }
+            required
           />
         </div>
       </div>
@@ -199,6 +201,7 @@ const AddEditForm: React.FC<AddEditFormProps> = ({
           onChange={(e) =>
             setSingleMovie({ ...singleMovie, overview: e.target.value })
           }
+          required
         />
       </div>
       <div className="form__footer">

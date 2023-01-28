@@ -1,39 +1,40 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './ConfirmDeleteModal.scss';
-import { MovieContext } from '../../context/MovieContext';
-import { ACTIONS } from '../../context/MovieReducer';
-import { MovieInfo } from '../addEditForm/AddEditForm';
-
-interface ConfirmDeleteModalProps {
-  movie: MovieInfo;
-  setIsDeleteModalOpen: (a: boolean) => void;
-  setIsDeleteResultModalOpen: (a: boolean) => void;
-}
-
-const ConfirmDelete: React.FC<ConfirmDeleteModalProps> = ({
-  movie,
-  setIsDeleteModalOpen,
+import { RootState } from '../../state/store';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setDeleteModalMovie,
   setIsDeleteResultModalOpen,
-}) => {
-  const { state, dispatch } = useContext(MovieContext);
-  const { movieForDetailsView } = state;
-  console.log('movie', movie);
+  setIsThereErrorInResult,
+} from '../../state/features/modalsSlice';
+import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
+import { useDeleteMovieMutation } from '../../state/api/moviesApi';
+
+const ConfirmDelete = () => {
+  const dispatch = useDispatch();
+  const movieForDetailsView = useSelector(
+    (state: RootState) => state.movieDetails.selectedMovie,
+  );
+  const movie = useSelector(
+    (state: RootState) => state.modals.deleteModalMovie,
+  );
+  const [deleteMovie] = useDeleteMovieMutation();
 
   const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
+    dispatch(setDeleteModalMovie(null));
   };
 
-  const handleConfirmDelete = () => {
-    closeDeleteModal();
-    if (movieForDetailsView && movieForDetailsView.id === movie.id) {
-      dispatch({ type: ACTIONS.SET_MOVIE_FOR_DETAILS_VIEW, payload: null });
-      dispatch({ type: ACTIONS.SET_IS_MOVIE_DETAILS_OPEN, payload: false });
+  const handleConfirmDelete = async () => {
+    const res = await deleteMovie(movie?.id as number);
+    if ('error' in res) {
+      dispatch(setIsThereErrorInResult(true));
+    } else {
+      if (movieForDetailsView && movieForDetailsView.id === movie?.id) {
+        dispatch(setSelectedMovie(null));
+      }
     }
-    dispatch({
-      type: ACTIONS.DELETE_MOVIE,
-      payload: movie.id,
-    });
-    setIsDeleteResultModalOpen(true);
+    dispatch(setIsDeleteResultModalOpen(true));
+    closeDeleteModal();
   };
 
   return (

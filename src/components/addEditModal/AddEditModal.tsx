@@ -1,23 +1,20 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './AddEditModal.scss';
-import AddEditForm, { MovieInfo } from '../addEditForm/AddEditForm';
-import { MovieContext } from '../../context/MovieContext';
-import { ACTIONS } from '../../context/MovieReducer';
+import AddEditForm from '../addEditForm/AddEditForm';
+import { useDispatch } from 'react-redux';
+import {
+  setIsAddModalOpen,
+  setEditModalMovie,
+} from '../../state/features/modalsSlice';
 
 const AddEditModal: React.FC<{
-  movie?: MovieInfo;
   addOrEdit: string;
-  setIsEditModalOpen?: (a: boolean) => void;
-  setIsEditResultModalOpen?: (a: boolean) => void;
-}> = ({ movie, addOrEdit, setIsEditModalOpen, setIsEditResultModalOpen }) => {
-  const { dispatch } = useContext(MovieContext);
+}> = ({ addOrEdit }) => {
+  const dispatch = useDispatch();
 
   const closeModal = () => {
-    dispatch({
-      type: ACTIONS.SET_IS_ADD_MODAL_OPEN,
-      payload: false,
-    });
-    setIsEditModalOpen && setIsEditModalOpen(false);
+    dispatch(setIsAddModalOpen(false));
+    dispatch(setEditModalMovie(null));
   };
 
   return (
@@ -37,12 +34,7 @@ const AddEditModal: React.FC<{
                 x
               </button>
             </div>
-            <AddEditForm
-              addOrEdit={addOrEdit}
-              movie={movie}
-              setIsEditModalOpen={setIsEditModalOpen}
-              setIsEditResultModalOpen={setIsEditResultModalOpen}
-            />
+            <AddEditForm addOrEdit={addOrEdit} />
           </div>
         </div>
       </div>

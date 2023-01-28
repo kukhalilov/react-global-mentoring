@@ -1,55 +1,60 @@
 import './MovieList.scss';
+import { useState } from 'react';
 import Genres from '../genres/Genres';
-import Sort, { sortMethods } from '../sort/Sort';
+import Sort from '../sort/Sort';
 import MovieItem from '../movieItem/MovieItem';
-import React, { useContext, useState } from 'react';
 import ResultModal from '../resultModal/ResultModal';
-import { MovieContext } from '../../context/MovieContext';
+import { useGetMoviesQuery } from '../../state/api/moviesApi';
+import { RootState } from '../../state/store';
+import { useSelector } from 'react-redux';
 
 const MovieList = () => {
+  const [sort, setSort] = useState('release_date');
+  const [filter, setFilter] = useState<string[]>([]);
+
   const {
-    state: { movies },
-  } = useContext(MovieContext);
+    data: moviesResponse,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetMoviesQuery({
+    sortBy: sort,
+    sortOrder: 'desc',
+    filter: filter.length == 0 ? undefined : filter,
+  });
+  const movies = moviesResponse?.data;
 
-  const [isDeleteResultModalOpen, setIsDeleteResultModalOpen] = useState(false);
-
-  const [sortState, setSortState] = useState('date');
-
-  const genres = movies.map((movie) => movie.genres);
-  const flattenedGenres = Array.from(new Set(genres.flat()));
-  const allGenres = flattenedGenres.length
-    ? ['All', ...flattenedGenres]
-    : ['All'];
-
-  const sortedMovies = movies.sort(
-    sortMethods[sortState as keyof typeof sortMethods],
-  );
+  const modalsState = useSelector((state: RootState) => state.modals);
 
   return (
     <>
       <div className="movie__list">
         <div className="movie__list__header">
-          <Genres genres={allGenres as string[]} />
-          <Sort setSortState={setSortState} />
+          <Genres filter={filter} setFilter={setFilter} />
+          <Sort setSort={setSort} />
         </div>
         <hr />
-        <h3 className="count">{movies.length} movies found</h3>
+        <h3 className="count">
+          {movies?.length && movies?.length > 0 ? movies?.length : 'No'} movies
+          found
+        </h3>
         <div className="movie__list__content">
-          {sortedMovies.map((movie) => (
-            <MovieItem
-              key={movie.id}
-              movie={movie}
-              setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
-            />
-          ))}
+          {isLoading && (
+            <div className="movie__list__loading">
+              <h2>Loading...</h2>
+            </div>
+          )}
+          {isError && 'error' in error && (
+            <div className="movie__list__error">
+              {JSON.stringify(error.error)}
+            </div>
+          )}
+          {isSuccess &&
+            movies?.map((movie) => <MovieItem key={movie.id} movie={movie} />)}
         </div>
       </div>
-      {isDeleteResultModalOpen && (
-        <ResultModal
-          setIsDeleteResultModalOpen={setIsDeleteResultModalOpen}
-          isDeleted={true}
-        />
-      )}
+      {modalsState.isDeleteResultModalOpen && <ResultModal isDeleted={true} />}
     </>
   );
 };
