@@ -23,10 +23,12 @@
   },
   "homepage": "https://github.com/kukhalilov/react-global-mentoring#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.2",
     "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.7.1"
+    "react-icons": "^4.7.1",
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
