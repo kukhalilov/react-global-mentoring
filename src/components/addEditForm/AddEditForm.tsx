@@ -82,8 +82,8 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
         console.log(res.error);
         dispatch(setIsThereErrorInResult(true));
       }
+      dispatch(setIsEditResultModalOpen(true));
     }
-    dispatch(setIsEditResultModalOpen(true));
   };
 
   return (
