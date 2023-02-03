@@ -1,5 +1,5 @@
 import Multiselect from 'multiselect-react-dropdown';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './AddEditForm.scss';
 import { RootState } from '../../state/store';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,6 +15,8 @@ import {
   useUpdateMovieMutation,
 } from '../../state/api/moviesApi';
 import { genres } from '../genres/Genres';
+import { Formik, Form, Field, ErrorMessage, ErrorMessageProps } from 'formik';
+import * as Yup from 'yup';
 
 interface AddEditFormProps {
   addOrEdit?: string;
@@ -29,40 +31,100 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
   const [addMovie] = useAddMovieMutation();
   const [updateMovie] = useUpdateMovieMutation();
 
+  const multiselectRef = React.createRef<HTMLDivElement>();
+  const formRef = React.createRef<HTMLFormElement>();
+
+  const [isGenresTouched, setIsGenresTouched] = useState(false);
+
+  useEffect(() => {
+    const multiselect = multiselectRef.current;
+    const form = formRef.current;
+
+    const setGenresTouchedOnFormClick = (e: MouseEvent) => {
+      if (!multiselect?.contains(e.target as Node)) {
+        setIsGenresTouched(true);
+      }
+    };
+    const setGenresTouchedOnClick = () => {
+      form?.addEventListener('click', setGenresTouchedOnFormClick);
+    };
+
+    multiselect?.addEventListener('click', setGenresTouchedOnClick);
+    return () => {
+      multiselect?.removeEventListener('click', setGenresTouchedOnClick);
+      form?.removeEventListener('click', setGenresTouchedOnFormClick);
+    };
+  });
+
   const initialValue = {
-    id: movie ? movie.id : 0,
     title: movie ? movie.title : '',
     poster_path: movie ? movie.poster_path : '',
-    genres: movie ? movie.genres : [],
     release_date: movie ? movie.release_date : '',
     overview: movie ? movie.overview : '',
     vote_average: movie ? movie.vote_average : '',
     runtime: movie ? movie.runtime : '',
-    tagline: movie ? movie.tagline : '',
-    vote_count: movie ? movie.vote_count : 0,
-    budget: movie ? movie.budget : 0,
-    revenue: movie ? movie.revenue : 0,
   };
 
-  const [singleMovie, setSingleMovie] = useState(initialValue);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(
+    movie ? movie.genres : [],
+  );
 
-  const multiselectRef = React.createRef<Multiselect>();
+  const validationSchema = Yup.object({
+    title: Yup.string().required('Required'),
+    poster_path: Yup.string().required('Required').url('Must be a valid URL'),
+    release_date: Yup.string().required('Required'),
+    overview: Yup.string().required('Required'),
+    vote_average: Yup.number()
+      .min(0, 'Must be greater than 0')
+      .max(10, 'Must be less than 10'),
+    runtime: Yup.number().required('Required').min(0, 'Must be greater than 0'),
+  });
 
-  const handleSubmit = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    e.preventDefault();
+  const CustomMultiselect = () => {
+    return (
+      <Multiselect
+        className="multiselect"
+        isObject={false}
+        options={genres}
+        showCheckbox={true}
+        displayValue="name"
+        placeholder="Select Genre"
+        style={{ chips: { background: '#f65261' } }}
+        selectedValues={selectedGenres}
+        onSelect={(selectedList: string[]) => {
+          setSelectedGenres(selectedList);
+        }}
+        onRemove={(selectedList: string[]) => {
+          setSelectedGenres(selectedList);
+          setIsGenresTouched(true);
+        }}
+      />
+    );
+  };
 
-    const updatedSingleMovie = {
-      ...singleMovie,
+  const CustomErrorMessage = (props: ErrorMessageProps) => {
+    return (
+      <div className="error-message">
+        <ErrorMessage {...props} />
+      </div>
+    );
+  };
+
+  const onSubmit = async (values: typeof initialValue) => {
+    const updatedMovie = {
+      ...values,
       id: movie ? movie.id : undefined,
-      vote_average: Number(singleMovie.vote_average),
-      runtime: Number(singleMovie.runtime),
-      tagline: singleMovie.tagline == '' ? undefined : singleMovie.tagline,
+      vote_average: Number(values.vote_average),
+      runtime: Number(values.runtime),
+      genres: selectedGenres,
+      tagline: undefined,
+      vote_count: movie ? movie.vote_count : undefined,
+      budget: movie ? movie.budget : undefined,
+      revenue: movie ? movie.revenue : undefined,
     };
 
     if (addOrEdit === 'Add') {
-      const res = await addMovie(updatedSingleMovie);
+      const res = await addMovie(updatedMovie);
       if ('error' in res) {
         console.log(res.error);
         dispatch(setIsThereErrorInResult(true));
@@ -70,13 +132,10 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
       dispatch(setIsAddModalOpen(false));
       dispatch(setIsAddResultModalOpen(true));
     } else {
-      const res = await updateMovie(updatedSingleMovie);
+      const res = await updateMovie(updatedMovie);
       if (!('error' in res)) {
-        if (
-          movieForDetailsView &&
-          movieForDetailsView.id === updatedSingleMovie.id
-        ) {
-          dispatch(setSelectedMovie(updatedSingleMovie));
+        if (movieForDetailsView && movieForDetailsView.id === updatedMovie.id) {
+          dispatch(setSelectedMovie(updatedMovie));
         }
       } else {
         console.log(res.error);
@@ -87,137 +146,93 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
   };
 
   return (
-    <form className="form" action="">
-      <div className="form__group">
-        <div className="form__control">
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            placeholder="Moana"
-            value={singleMovie.title}
-            onChange={(e) => {
-              setSingleMovie({ ...singleMovie, title: e.target.value });
-            }}
-            required
-          />
+    <Formik
+      initialValues={initialValue}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+      onReset={() => {
+        setIsGenresTouched(false);
+      }}
+    >
+      <Form className="form" ref={formRef}>
+        <div className="form__group">
+          <div className="form__control">
+            <label htmlFor="title">Title</label>
+            <Field type="text" name="title" id="title" placeholder="Moana" />
+            <CustomErrorMessage name="title" />
+          </div>
+          <div className="form__control">
+            <label htmlFor="movie_poster_path">Movie URL</label>
+            <Field
+              type="text"
+              name="poster_path"
+              id="movie_poster_path"
+              placeholder="https://"
+            />
+            <CustomErrorMessage name="poster_path" />
+          </div>
+          <div className="form__control__genre">
+            <label htmlFor="genre">Genre</label>
+            <div ref={multiselectRef}>
+              <CustomMultiselect />
+            </div>
+            {selectedGenres.length === 0 && isGenresTouched && (
+              <div className="error-message">Select at least one genre</div>
+            )}
+          </div>
         </div>
-        <div className="form__control">
-          <label htmlFor="movie_poster_path">Movie URL</label>
-          <input
-            type="text"
-            name="movie_poster_path"
-            id="movie_poster_path"
-            placeholder="https://"
-            value={singleMovie.poster_path}
-            onChange={(e) =>
-              setSingleMovie({ ...singleMovie, poster_path: e.target.value })
-            }
-            required
-          />
-        </div>
-        <div className="form__control genre">
-          <label htmlFor="genre">Genre</label>
-          <Multiselect
-            className="multiselect"
-            isObject={false}
-            options={genres}
-            showCheckbox={true}
-            displayValue="name"
-            placeholder="Select Genre"
-            style={{ chips: { background: '#f65261' } }}
-            ref={multiselectRef}
-            selectedValues={singleMovie.genres}
-            onSelect={(selectedList: Array<string>) => {
-              setSingleMovie({
-                ...singleMovie,
-                genres: selectedList.map((item) => item),
-              });
-            }}
-            onRemove={(selectedList: Array<string>) => {
-              setSingleMovie({
-                ...singleMovie,
-                genres: selectedList.map((item) => item),
-              });
-            }}
-          />
-        </div>
-      </div>
 
-      <div className="form__group">
-        <div className="form__control">
-          <label htmlFor="release_date">Release Date</label>
-          <input
-            type="date"
-            name="release_date"
-            id="release_date"
-            placeholder="Select Date"
-            value={singleMovie.release_date!}
-            onChange={(e) =>
-              setSingleMovie({ ...singleMovie, release_date: e.target.value })
-            }
-            required
-          />
+        <div className="form__group">
+          <div className="form__control">
+            <label htmlFor="release_date">Release Date</label>
+            <Field
+              type="date"
+              name="release_date"
+              id="release_date"
+              placeholder="Select Date"
+            />
+            <CustomErrorMessage name="release_date" />
+          </div>
+          <div className="form__control">
+            <label htmlFor="rating">Rating</label>
+            <Field
+              type="number"
+              name="vote_average"
+              id="rating"
+              placeholder="7.8"
+            />
+            <CustomErrorMessage name="vote_average" />
+          </div>
+          <div className="form__control">
+            <label htmlFor="runtime">Runtime</label>
+            <Field
+              type="number"
+              name="runtime"
+              id="runtime"
+              placeholder="minutes"
+            />
+            <CustomErrorMessage name="runtime" />
+          </div>
         </div>
-        <div className="form__control">
-          <label htmlFor="rating">Rating</label>
-          <input
-            type="number"
-            name="rating"
-            id="rating"
-            placeholder="7.8"
-            value={singleMovie.vote_average!}
-            onChange={(e) =>
-              setSingleMovie({ ...singleMovie, vote_average: e.target.value })
-            }
-          />
-        </div>
-        <div className="form__control">
-          <label htmlFor="runtime">Runtime</label>
-          <input
-            type="number"
-            name="runtime"
-            id="runtime"
-            placeholder="minutes"
-            value={singleMovie.runtime}
-            onChange={(e) =>
-              setSingleMovie({ ...singleMovie, runtime: e.target.value })
-            }
-            required
-          />
-        </div>
-      </div>
 
-      <div className="overview">
-        <label htmlFor="overview">Overview</label>
-        <textarea
-          name="overview"
-          id="overview"
-          cols={30}
-          rows={9}
-          placeholder="Movie description"
-          value={singleMovie.overview}
-          onChange={(e) =>
-            setSingleMovie({ ...singleMovie, overview: e.target.value })
-          }
-          required
-        />
-      </div>
-      <div className="form__footer">
-        <button
-          type="reset"
-          onClick={() => {
-            setSingleMovie(initialValue);
-          }}
-        >
-          Reset
-        </button>
-        <button type="submit" onClick={handleSubmit}>
-          Submit
-        </button>
-      </div>
-    </form>
+        <div className="overview">
+          <label htmlFor="overview">Overview</label>
+          <Field
+            as="textarea"
+            name="overview"
+            id="overview"
+            placeholder="Movie description"
+          />
+          <CustomErrorMessage name="overview" />
+        </div>
+        <div className="form__footer">
+          <button type="reset">Reset</button>
+          <button type="submit" onClick={() => setIsGenresTouched(true)}>
+            Submit
+          </button>
+        </div>
+      </Form>
+    </Formik>
   );
 };
 
