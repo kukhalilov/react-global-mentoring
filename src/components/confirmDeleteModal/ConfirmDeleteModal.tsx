@@ -7,14 +7,11 @@ import {
   setIsDeleteResultModalOpen,
   setIsThereErrorInResult,
 } from '../../state/features/modalsSlice';
-import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
 import { useDeleteMovieMutation } from '../../state/api/moviesApi';
 
 const ConfirmDelete = () => {
   const dispatch = useDispatch();
-  const movieForDetailsView = useSelector(
-    (state: RootState) => state.movieDetails.selectedMovie,
-  );
+
   const movie = useSelector(
     (state: RootState) => state.modals.deleteModalMovie,
   );
@@ -28,10 +25,6 @@ const ConfirmDelete = () => {
     const res = await deleteMovie(movie?.id as number);
     if ('error' in res) {
       dispatch(setIsThereErrorInResult(true));
-    } else {
-      if (movieForDetailsView && movieForDetailsView.id === movie?.id) {
-        dispatch(setSelectedMovie(null));
-      }
     }
     dispatch(setIsDeleteResultModalOpen(true));
     closeDeleteModal();

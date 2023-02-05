@@ -1,15 +1,24 @@
 import React, { useEffect } from 'react';
 import './MovieDetails.scss';
 import { FaSearch } from 'react-icons/fa';
-import { RootState } from '../../state/store';
-import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
+import { useSearchParams } from 'react-router-dom';
+import { useGetMovieQuery } from '../../state/api/moviesApi';
 
 const MovieDetails = () => {
-  const dispatch = useDispatch();
-  const movie = useSelector(
-    (state: RootState) => state.movieDetails.selectedMovie,
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const movieId = searchParams.get('movie');
+
+  const {
+    data: movie,
+    isLoading,
+    isError,
+  } = useGetMovieQuery(movieId as string);
+
+  const handleClick = () => {
+    const updatedSearchParams = new URLSearchParams(searchParams.toString());
+    updatedSearchParams.delete('movie');
+    setSearchParams(updatedSearchParams.toString());
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,9 +26,19 @@ const MovieDetails = () => {
 
   return (
     <div className="movie-details">
-      {movie && (
-        <>
-          <div className="movie-details__content">
+      <div className="movie-details__content">
+        {isLoading && (
+          <div className="movie-details__loading">
+            <h2>Loading...</h2>
+          </div>
+        )}
+        {isError && (
+          <div className="movie-details__error">
+            <h2>Something went wrong...</h2>
+          </div>
+        )}
+        {movie && (
+          <>
             <div className="movie-details__content__left">
               <img
                 src={movie.poster_path}
@@ -58,19 +77,15 @@ const MovieDetails = () => {
                 <p>{movie.overview}</p>
               </div>
             </div>
-          </div>
-          <div className="movie-details__back-to-search">
-            <button
-              type="button"
-              onClick={() => {
-                dispatch(setSelectedMovie(null));
-              }}
-            >
-              <FaSearch className="search-icon" />
-            </button>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
+
+      <div className="movie-details__back-to-search">
+        <button type="button" onClick={handleClick}>
+          <FaSearch className="search-icon" />
+        </button>
+      </div>
     </div>
   );
 };

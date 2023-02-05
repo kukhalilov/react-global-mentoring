@@ -48,8 +48,6 @@ export const moviesApi = createApi({
       query(id) {
         return `movies/${id}`;
       },
-      transformResponse: (response: { data: { movie: Movie } }) =>
-        response.data.movie,
       providesTags: (_result, _error, id) => [{ type: 'Movies', id }],
     }),
 

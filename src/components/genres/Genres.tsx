@@ -1,47 +1,64 @@
 import React from 'react';
 import './Genres.scss';
-import { useDispatch } from 'react-redux';
-import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
+import { useSearchParams } from 'react-router-dom';
 
 export const genres = [
-  'Action',
-  'Adventure',
-  'Comedy',
-  'Crime',
-  'Drama',
-  'Fantasy',
-  'Horror',
-  'Mystery',
-  'Thriller',
+  'action',
+  'adventure',
+  'comedy',
+  'crime',
+  'drama',
+  'fantasy',
+  'horror',
+  'mystery',
+  'thriller',
 ];
 
-interface GenresProps {
-  filter: string[];
-  setFilter: (a: string[]) => void;
-}
+const Genres = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const updatedSearchParams = new URLSearchParams(searchParams.toString());
 
-const Genres: React.FC<GenresProps> = ({ filter, setFilter }) => {
-  const dispatch = useDispatch();
+  const genresFilter = searchParams.get('genre')?.split(',') || [];
 
   const handleAllClick = () => {
-    setFilter([]);
-    dispatch(setSelectedMovie(null));
+    updatedSearchParams.delete('genre');
+    setSearchParams(updatedSearchParams.toString());
   };
 
   const handleGenreClick = (e: React.MouseEvent<HTMLSpanElement>) => {
-    const genre = e.currentTarget.textContent;
-    if (genre && filter.includes(genre)) {
-      setFilter(filter.filter((item) => item !== genre));
+    const genre = e.currentTarget.textContent?.toLowerCase();
+    if (genre && genresFilter.includes(genre)) {
+      const newGenresFilter = genresFilter.filter((item) => item !== genre);
+      if (newGenresFilter.length === 0) {
+        updatedSearchParams.delete('genre');
+        setSearchParams(updatedSearchParams.toString());
+        return;
+      }
+      updatedSearchParams.set(
+        'genre',
+        newGenresFilter.length > 1
+          ? newGenresFilter.join(',')
+          : newGenresFilter[0],
+      );
+      setSearchParams(updatedSearchParams.toString());
     } else if (genre) {
-      setFilter([...filter, genre]);
+      const newGenresFilter = [...genresFilter, genre];
+      updatedSearchParams.set(
+        'genre',
+        newGenresFilter.length > 1
+          ? newGenresFilter.join(',')
+          : newGenresFilter[0],
+      );
+      setSearchParams(updatedSearchParams.toString());
     }
-    dispatch(setSelectedMovie(null));
   };
 
   return (
     <div className="genres">
       <span
-        className={filter.length === 0 ? 'genres__item active' : 'genres__item'}
+        className={
+          genresFilter.length === 0 ? 'genres__item active' : 'genres__item'
+        }
         onClick={handleAllClick}
         role="presentation"
       >
@@ -50,13 +67,15 @@ const Genres: React.FC<GenresProps> = ({ filter, setFilter }) => {
       {genres.map((genre) => (
         <span
           className={
-            filter.includes(genre) ? 'genres__item active' : 'genres__item'
+            genresFilter.includes(genre)
+              ? 'genres__item active'
+              : 'genres__item'
           }
           key={genre}
           onClick={handleGenreClick}
           role="presentation"
         >
-          {genre}
+          {genre.charAt(0)?.toUpperCase() + genre.slice(1).toLowerCase()}
         </span>
       ))}
     </div>

@@ -9,7 +9,6 @@ import {
   setIsEditResultModalOpen,
   setIsThereErrorInResult,
 } from '../../state/features/modalsSlice';
-import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
 import {
   useAddMovieMutation,
   useUpdateMovieMutation,
@@ -24,9 +23,7 @@ interface AddEditFormProps {
 
 const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
   const dispatch = useDispatch();
-  const movieForDetailsView = useSelector(
-    (state: RootState) => state.movieDetails.selectedMovie,
-  );
+
   const movie = useSelector((state: RootState) => state.modals.editModalMovie);
   const [addMovie] = useAddMovieMutation();
   const [updateMovie] = useUpdateMovieMutation();
@@ -57,12 +54,12 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
   });
 
   const initialValue = {
-    title: movie ? movie.title : '',
-    poster_path: movie ? movie.poster_path : '',
-    release_date: movie ? movie.release_date : '',
-    overview: movie ? movie.overview : '',
-    vote_average: movie ? movie.vote_average : '',
-    runtime: movie ? movie.runtime : '',
+    title: movie && movie.title ? movie.title : '',
+    poster_path: movie && movie.poster_path ? movie.poster_path : '',
+    release_date: movie && movie.release_date ? movie.release_date : '',
+    overview: movie && movie.overview ? movie.overview : '',
+    vote_average: movie && movie.vote_average ? movie.vote_average : '',
+    runtime: movie && movie.runtime ? movie.runtime : '',
   };
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>(
@@ -85,7 +82,10 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
       <Multiselect
         className="multiselect"
         isObject={false}
-        options={genres}
+        options={genres.map(
+          (genre) =>
+            genre.charAt(0)?.toUpperCase() + genre.slice(1).toLowerCase(),
+        )}
         showCheckbox={true}
         displayValue="name"
         placeholder="Select Genre"
@@ -123,22 +123,16 @@ const AddEditForm: React.FC<AddEditFormProps> = ({ addOrEdit }) => {
       revenue: movie ? movie.revenue : undefined,
     };
 
-    if (addOrEdit === 'Add') {
+    if (addOrEdit === 'Add' && selectedGenres.length > 0) {
       const res = await addMovie(updatedMovie);
       if ('error' in res) {
-        console.log(res.error);
         dispatch(setIsThereErrorInResult(true));
       }
       dispatch(setIsAddModalOpen(false));
       dispatch(setIsAddResultModalOpen(true));
-    } else {
+    } else if (addOrEdit === 'Edit' && selectedGenres.length > 0) {
       const res = await updateMovie(updatedMovie);
-      if (!('error' in res)) {
-        if (movieForDetailsView && movieForDetailsView.id === updatedMovie.id) {
-          dispatch(setSelectedMovie(updatedMovie));
-        }
-      } else {
-        console.log(res.error);
+      if ('error' in res) {
         dispatch(setIsThereErrorInResult(true));
       }
       dispatch(setIsEditResultModalOpen(true));

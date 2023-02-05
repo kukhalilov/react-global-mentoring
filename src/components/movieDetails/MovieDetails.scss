@@ -10,6 +10,7 @@
   .movie-details__content {
     display: flex;
     width: 100%;
+    min-height: 26rem;
     @media screen and (max-width: 1024px) {
       flex-direction: column;
     }
@@ -17,6 +18,19 @@
     img {
       height: 22rem;
       width: 17rem;
+    }
+
+    .movie-details__loading,
+    .movie-details__error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26rem;
+      width: 100%;
+      background-color: $color-black;
+      color: $color-white;
+      font-size: 1.5rem;
+      text-align: center;
     }
 
     .movie-details__content__left {
@@ -98,15 +112,17 @@
       }
     }
   }
-  .movie-details__back-to-search button {
+  .movie-details__back-to-search {
     position: absolute;
     top: 2rem;
     right: 5%;
-    background-color: $color-black;
-    border: none;
     cursor: pointer;
     @media screen and (max-width: 1024px) {
       top: 0.5rem;
+    }
+    button {
+      background-color: $color-black;
+      border: none;
     }
     .search-icon {
       color: $color-infra-red;

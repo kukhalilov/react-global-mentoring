@@ -11,7 +11,7 @@ import {
   setEditModalMovie,
   setDeleteModalMovie,
 } from '../../state/features/modalsSlice';
-import { setSelectedMovie } from '../../state/features/movieDetailsSlice';
+import { useSearchParams } from 'react-router-dom';
 
 interface MovieItemProps {
   movie: Movie;
@@ -38,8 +38,12 @@ const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
     setIsContextMenuOpen(false);
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const handleImgClick = () => {
-    dispatch(setSelectedMovie(movie));
+    const updatedSearchParams = new URLSearchParams(searchParams.toString());
+    updatedSearchParams.set('movie', movie.id!.toString());
+    setSearchParams(updatedSearchParams.toString());
   };
 
   return (
