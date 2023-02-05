@@ -1,0 +1,29 @@
+@use '../../utils/variables' as *;
+
+.sort {
+  display: flex;
+  gap: 2rem;
+  text-transform: uppercase;
+  .sort__title {
+    color: $color-white;
+    opacity: 0.6;
+    display: inline-flex;
+    height: 1.5rem;
+  }
+  @media screen and (max-width: 800px) {
+    flex-direction: column;
+  }
+  #sort-by {
+    border: none;
+    outline: none;
+    background-color: $color-black2;
+    color: $color-white;
+    text-transform: uppercase;
+    display: flex;
+    align-items: flex-start;
+    height: 1.5rem;
+    option {
+      padding: 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,131 @@
+@use '../../utils/variables' as *;
+
+.header {
+  position: relative;
+  max-width: 100%;
+  min-height: 26rem;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-black;
+  background: url(../../assets/images/netflix.png) center no-repeat;
+  background-size: cover;
+  overflow: hidden;
+  color: #ffffff;
+
+  .header__overlay {
+    background: rgba(20, 22, 23, 0.82);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    min-height: 26rem;
+    z-index: 2;
+  }
+
+  .header__bg {
+    position: absolute;
+    margin-top: -80px;
+    margin-right: -30px;
+    width: 100%;
+    overflow: hidden;
+    opacity: 0.5;
+  }
+
+  .header__content {
+    width: 100%;
+    min-height: 26rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: $color-white;
+    h1 {
+      width: 65vw;
+      font-size: 2.6rem;
+      line-height: 3rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      @media screen and (max-width: 800px) {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .search {
+      display: flex;
+      width: 65vw;
+      @media screen and (max-width: 800px) {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        button.search__button {
+          margin: 0;
+        }
+      }
+
+      .search__input {
+        height: 3rem;
+        width: 45rem;
+        max-width: 90%;
+        padding-left: 1.5rem;
+        padding-right: 1rem;
+        background-color: $color-black2;
+        outline: none;
+        &::placeholder {
+          color: $color-white;
+          opacity: 0.5;
+        }
+        border: none;
+        font-size: 1.3rem;
+        border-radius: 4px;
+        color: $color-white;
+      }
+      .search__button {
+        width: 14rem;
+        height: 3rem;
+        margin-left: 1.5rem;
+        font-size: 1.3rem;
+        background-color: $color-infra-red;
+        border-radius: 4px;
+        outline: none;
+        border: none;
+        color: $color-white;
+        text-transform: uppercase;
+        cursor: pointer;
+        @media screen and (max-width: 800px) {
+          width: 10rem;
+          font-size: 1rem;
+          margin-left: 0;
+        }
+        &:hover {
+          background-color: $color-infra-red-hover;
+        }
+      }
+    }
+  }
+}
+
+.add__movie__button {
+  width: 11rem;
+  height: 2.8rem;
+  background-color: $color-light-grey;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  color: $color-infra-red;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 11;
+  cursor: pointer;
+  @media screen and (max-width: 800px) {
+    width: 8rem;
+    font-size: 1rem;
+    top: 1rem;
+    right: 1rem;
+  }
+  &:hover {
+    background-color: $color-light-grey2;
+  }
+}

@@ -1,0 +1,34 @@
+@use './utils/variables' as *;
+
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+.root {
+  max-width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  .divider {
+    margin: 0;
+    width: 100%;
+    height: 10px;
+    background-color: $color-dark-grey;
+    border: none;
+  }
+  .top-logo {
+    position: absolute;
+    width: 6rem;
+    height: 1.5rem;
+    top: 1rem;
+    left: 2rem;
+    z-index: 11;
+  }
+}

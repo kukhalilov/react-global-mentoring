@@ -1,0 +1,10 @@
+@use '../../utils/variables' as *;
+
+.logo {
+  font-size: 1.3rem;
+  color: $color-infra-red;
+  :first-child {
+    font-weight: bold;
+  }
+  z-index: 11;
+}
