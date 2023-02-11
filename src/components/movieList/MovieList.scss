@@ -1,0 +1,42 @@
+@use '../../utils/variables' as *;
+
+.movie__list {
+  background-color: $color-black;
+  padding: 1.2rem 3.5rem 3.5rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: calc(100vh - (30rem + 10px));
+
+  .movie__list__header {
+    display: flex;
+    justify-content: space-between;
+    min-height: 1.4rem;
+  }
+
+  hr {
+    margin-top: 1rem;
+    width: 100%;
+    background-color: $color-light-grey;
+  }
+
+  .count {
+    font-size: 1.3rem;
+    color: $color-white;
+  }
+
+  .movie__list__content {
+    .search__results {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2.6rem;
+    }
+    .movie__list__loading h2,
+    .movie__list__error h2 {
+      font-size: 1.5rem;
+      color: $color-white;
+    }
+  }
+}
