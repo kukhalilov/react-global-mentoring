@@ -11,7 +11,7 @@ const Root = () => {
   const [searchParams] = useSearchParams();
   const movieId = searchParams.get('movie');
   return (
-    <div className="root">
+    <div className="root search__page">
       <div className="top-logo">
         <Logo />
       </div>

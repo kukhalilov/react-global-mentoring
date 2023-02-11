@@ -62,8 +62,13 @@ const MovieList = () => {
               <h2>Failed to fetch</h2>
             </div>
           )}
-          {isSuccess &&
-            movies?.map((movie) => <MovieItem key={movie.id} movie={movie} />)}
+          {isSuccess && (
+            <div className="search__results">
+              {movies?.map((movie) => (
+                <MovieItem key={movie.id} movie={movie} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {modalsState.isDeleteResultModalOpen && <ResultModal isDeleted={true} />}

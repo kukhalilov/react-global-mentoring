@@ -6,7 +6,7 @@ type Error = {
   message?: string;
 };
 
-export default function ErrorPage() {
+const ErrorPage = () => {
   const error = useRouteError();
   console.error(error);
 
@@ -20,4 +20,6 @@ export default function ErrorPage() {
       <Link to="/search">Back to main page</Link>
     </div>
   );
-}
+};
+
+export default ErrorPage;

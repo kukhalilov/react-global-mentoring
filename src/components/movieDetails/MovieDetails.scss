@@ -116,13 +116,13 @@
     position: absolute;
     top: 2rem;
     right: 5%;
-    cursor: pointer;
     @media screen and (max-width: 1024px) {
       top: 0.5rem;
     }
     button {
       background-color: $color-black;
       border: none;
+      cursor: pointer;
     }
     .search-icon {
       color: $color-infra-red;

@@ -11,7 +11,7 @@ interface ModalsState {
   isThereErrorInResult: boolean;
 }
 
-const initialState: ModalsState = {
+export const initialState: ModalsState = {
   isAddModalOpen: false,
   editModalMovie: null,
   deleteModalMovie: null,
